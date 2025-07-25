@@ -1,0 +1,77 @@
+name: Bug report
+description: Create a bug report to help us improve
+labels:
+  - bug
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of the bug.
+    validations:
+      required: true
+  - type: input
+    id: docker
+    attributes:
+      label: Docker version
+      description: Docker version
+    validations:
+      required: true
+  - type: input
+    id: image
+    attributes:
+      label: Docker image version
+      description: Docker image tag version
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: 1Panel version
+      description: 1Panel release version
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      description: The device exhibiting this bug.
+    validations:
+      required: true
+  - type: dropdown
+    id: image_kind
+    attributes:
+      label: Image kind
+      options:
+        - Official downloaded image
+        - Self-built image
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Steps to reproduce the reported behaviour.
+  - type: textarea
+    id: behaviour
+    attributes:
+      label: Actual behaviour
+      description: A clear and concise description of what actually happens.
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: A clear and concise description of what you expected to happen.
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional info
+      description: Add any additional info you think might be helfpul.
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Terms
+      description: By submitting this issue, you agree to the terms below.
+      options:
+        - label: I am reporting an issue for docker-1panel, not an unsupported fork.
+          required: true

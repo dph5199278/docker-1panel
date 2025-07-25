@@ -1,0 +1,64 @@
+name: Check 1Panel Version
+on:
+  schedule:
+    # 每天）北京时间22:00执行
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+
+jobs:
+  check_version:
+    name: Check 1Panel Version
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.compare.outputs.changed }}
+      PANELVER: ${{ steps.get_version.outputs.PANELVER }}
+    steps:
+      -
+        name: Get Current Version
+        id: get_version
+        run: |
+          VER_INPUT=${{ github.event.inputs.version }}
+          VER_LATEST=$(curl -fsSL https://resource.fit2cloud.com/1panel/package/v2/stable/latest)
+          if [ -z "${VER_INPUT}" ]; then
+            echo "PANELVER=${VER_LATEST}" >> $GITHUB_OUTPUT
+            echo ${VER_LATEST} > current_version.txt
+          else
+            echo "PANELVER=${VER_INPUT}" >> $GITHUB_OUTPUT
+            echo ${VER_INPUT} > current_version.txt
+          fi
+
+      - name: Cache Version
+        uses: actions/cache@v4
+        with:
+          path: cached_version.txt
+          key: version-cache
+
+      - name: Compare Versions
+        id: compare
+        run: |
+          if [ -f cached_version.txt ]; then
+            echo "Cached version: $(cat cached_version.txt)"
+            echo "Current version: ${{ steps.get_version.outputs.PANELVER }}"
+            
+            if [ "$(cat cached_version.txt)" != "${{ steps.get_version.outputs.PANELVER }}" ]; then
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "changed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "No cached version found"
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+ 
+      - name: Update Cache
+        if: steps.compare.outputs.changed == 'true'
+        run: |
+          cp current_version.txt cached_version.txt
+
+  build:
+    needs: check_version
+    if: needs.check_version.outputs.changed == 'true'
+    uses: ./.github/workflows/build-1panel-docker-image.yml
+    with:
+      version: ${{ needs.check_version.outputs.PANELVER }}
+    secrets: inherit
