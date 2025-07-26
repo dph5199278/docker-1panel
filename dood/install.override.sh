@@ -20,6 +20,7 @@ mkdir -p "$$FAKE_DIR/usr/local/bin"
 mkdir -p "$$FAKE_DIR/usr/bin"
 mkdir -p "$FAKE_DIR/etc/systemd/system"
 mkdir -p "$FAKE_DIR/etc/ssh"
+mkdir -p "$FAKE_DIR/default/etc/ssh"
 
 LANG_DIR="$CURRENT_DIR/lang"
 selected_lang="en"
@@ -55,6 +56,7 @@ function Set_Ssh(){
     if which ssh >/dev/null 2>&1; then
         sed -i "s/^#Port.*/Port $SSH_PORT/" /etc/ssh/sshd_config
         cp /etc/ssh/sshd_config $FAKE_DIR/etc/ssh/
+        cp /etc/ssh/sshd_config $FAKE_DIR/default/etc/ssh/
     fi
 }
 

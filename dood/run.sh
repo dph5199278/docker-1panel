@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# 只启动必要服务
+# 解决挂载目录为空时，无法启动的问题
+# 如果挂载目录为空，则复制默认配置文件到挂载目录
+ [ -z "$(ls -A /root)" ] && cp -r /default/root/. /root/
+ [ -z "$(ls -A /etc/ssh)" ] && cp -r /default/etc/ssh/. /etc/ssh/
 
 # 1Panel数据初始化
 systemctl start 1panel-core

@@ -25,7 +25,10 @@ RUN apt-get update && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list && \
     apt-get update && apt-get install -y --no-install-recommends containerd.io docker-ce-cli docker-compose-plugin docker-ce && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    sed -i 's/^\(ExecStart=\).*/\1\/usr\/bin\/dockerd --containerd=\/run\/containerd\/containerd.sock/' /lib/systemd/system/docker.service
+    sed -i 's/^\(ExecStart=\).*/\1\/usr\/bin\/dockerd --containerd=\/run\/containerd\/containerd.sock/' /lib/systemd/system/docker.service && \
+    mkdir -p /default/root /default/etc/ssh && \
+    cp -r /root/. /default/root/ && \
+    cp -r /etc/ssh/. /default/etc/ssh/
 
 # 定义版本参数
 ARG PANELVER=v2.0.5
