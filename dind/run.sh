@@ -2,8 +2,11 @@
 
 # 解决挂载目录为空时，无法启动的问题
 # 如果挂载目录为空，则复制默认配置文件到挂载目录
- [ -z "$(ls -A /root)" ] && cp -r /default/root/. /root/
- [ -z "$(ls -A /etc/ssh)" ] && cp -r /default/etc/ssh/. /etc/ssh/
+[ -z "$(ls -A /root)" ] && cp -r /default/root/. /root/
+[ -z "$(ls -A /etc/ssh)" ] && cp -r /default/etc/ssh/. /etc/ssh/
+
+# 开启日志
+systemctl start rsyslog
 
 # 1Panel数据初始化
 systemctl start 1panel-core

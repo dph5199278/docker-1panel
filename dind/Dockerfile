@@ -11,6 +11,7 @@ ENV TZ=Asia/Shanghai
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3 \
+    python3-pip \
     ca-certificates \
     curl \
     gnupg2 \
@@ -19,16 +20,21 @@ RUN apt-get update && \
     openssh-server \
     sqlite3 \
     tzdata \
+    rsyslog \
     && apt-get upgrade -y \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list && \
     apt-get update && apt-get install -y --no-install-recommends containerd.io docker-ce-cli docker-compose-plugin docker-ce && \
+    python3 -m pip install pyasynchat --break-system-packages && \
+    apt-get remove python3-pip -y && \
+    apt-get autoremove -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     sed -i 's/^\(ExecStart=\).*/\1\/usr\/bin\/dockerd --containerd=\/run\/containerd\/containerd.sock/' /lib/systemd/system/docker.service && \
     mkdir -p /default/root /default/etc/ssh && \
     cp -r /root/. /default/root/ && \
-    cp -r /etc/ssh/. /default/etc/ssh/
+    cp -r /etc/ssh/. /default/etc/ssh/ && \
+    echo "$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat" > /etc/rsyslog.d/00-time.conf
 
 # 定义版本参数
 ARG PANELVER=v2.0.5
