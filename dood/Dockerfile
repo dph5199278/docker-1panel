@@ -4,13 +4,16 @@ FROM ubuntu:24.04 AS base
 # 设置环境变量，避免交互式配置
 ARG DEBIAN_FRONTEND=noninteractive
 
-# 设置时区为亚洲/上海
-ENV TZ=Asia/Shanghai
+# 设置默认语言并将时区为亚洲/上海
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    TZ=Asia/Shanghai
 
 # 安装APT依赖包并清理APT缓存
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3 \
+    python3-pip \
     ca-certificates \
     curl \
     gnupg2 \
@@ -19,12 +22,20 @@ RUN apt-get update && \
     openssh-server \
     sqlite3 \
     tzdata \
+    rsyslog \
     && apt-get upgrade -y \
     && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list && \
+    python3 -m pip install pyasynchat --break-system-packages && \
+    apt-get remove python3-pip -y && \
+    apt-get autoremove -y && \
     apt-get update && apt-get install -y --no-install-recommends docker-ce-cli docker-compose-plugin && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /default/root /default/etc/ssh && \
+    cp -r /root/. /default/root/ && \
+    cp -r /etc/ssh/. /default/etc/ssh/ && \
+    echo "$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat" > /etc/rsyslog.d/00-time.conf
 
 # 定义版本参数
 ARG PANELVER=v2.0.5

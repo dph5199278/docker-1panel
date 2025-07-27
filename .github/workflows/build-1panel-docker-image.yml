@@ -3,7 +3,7 @@ on:
   workflow_call:
     inputs:
       version:
-        description: "1Panel Version (Empty for latest)"
+        description: "1Panel Version"
         type: string
         required: true
     secrets:
@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "1Panel Version (Empty for latest)"
+        description: "1Panel Version"
         type: string
         required: true
 
@@ -67,3 +67,12 @@ jobs:
             PANELVER=${{ steps.get_version.outputs.PANELVER }}
           platforms: linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
           tags: ${{ steps.generate_tags.outputs.tags }}
+          labels: |
+            org.opencontainers.image.authors=Dely <dph5199278@163.com>
+            org.opencontainers.image.title=1Panel
+            org.opencontainers.image.description=1Panel Docker Image
+            org.opencontainers.image.url=https://github.com/dph5199278/docker-1panel
+            org.opencontainers.image.source=https://github.com/dph5199278/docker-1panel/${{ matrix.folder }}
+            org.opencontainers.image.version=${{ steps.get_version.outputs.PANELVER }}
+            org.opencontainers.image.vendor=Dely
+            org.opencontainers.image.licenses=GPL-3.0-or-later

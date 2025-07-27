@@ -14,7 +14,7 @@
   - [2.3 DooD](#23-dood)
 - [3. 镜像编译](#3-镜像编译)
   - [3.1 DinD](#31-dind)
-- [3.2 DooD](#32-dood)
+  - [3.2 DooD](#32-dood)
 
 ***
 
@@ -111,6 +111,7 @@ docker run -d \
     -v /docker/1panel/etc/docker:/etc/docker \
     -v /docker/1panel/root:/root \
     -v /docker/1panel/ssh:/etc/ssh \
+    --cap-add=NET_ADMIN \
     dph5199278/1panel:dind-latest
 ```
 ***
@@ -136,6 +137,8 @@ services:
       - /docker/1panel/root:/root
       # SSH配置映射
       - /docker/1panel/ssh:/etc/ssh
+    cap_add:
+      - NET_ADMIN
     environment:
       # 时区设置
       - TZ=Asia/Shanghai
@@ -222,7 +225,7 @@ cd dind && \
 docker buildx build --platform linux/amd64,linux/arm64,linux/ppc64le,linux/s390x --build-arg PANELVER=v2.0.5 -t dph5199278/1panel:v2.0.5 --push .
 ```
 
-## 3.2 DooD
+### 3.2 DooD
 ```bash
 cd dood && \
 docker build --build-arg PANELVER=your_desired_version -t your_image_name:tag .
